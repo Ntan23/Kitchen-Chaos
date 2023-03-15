@@ -6,30 +6,30 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    #region CanBeEditInEditorVariables
-    [SerializeField] private float speed;
-    [SerializeField] private float rotateSpeed;
-    #endregion
-
-    #region vectorVariables
+    #region VectorVariables
     private Vector2 inputVector;
     private Vector3 moveDirection;
     private Vector3 moveDirectionX;
     private Vector3 moveDirectionZ;
     #endregion
 
-    #region boolVariables
+    #region BoolVariables
     private bool isWalking;
     private bool canMove;
     #endregion
 
-    #region floatVariables
+    #region FloatVariables
+    [Header("Speed")]
+    [SerializeField] private float speed;
+    [SerializeField] private float rotateSpeed;
+
+    [Header("Player")]
     public float playerRadius = 0.7f;
     public float playerHeight = 2.0f;
-    public float moveDistance;
+    [HideInInspector] public float moveDistance;
     #endregion
 
-    #region otherVariable
+    #region OtherVariableS
     GameInputManager gameInputManager;
     CollisionDetector collisionDetector;
     Detector detector;
@@ -64,29 +64,19 @@ public class PlayerController : MonoBehaviour
             moveDirectionX = new Vector3(moveDirection.x, 0f, 0f).normalized;
             canMove = detector.CanMove(moveDirectionX);
 
-            if(canMove)
-            {
-                //Can Move Only On The X-Axis
-                moveDirection = moveDirectionX;
-            }
+            if(canMove) /*Can Move Only On The X-Axis*/ moveDirection = moveDirectionX;
+            
             else if(!canMove)
             {
                 //Attempt Only On The Z-Axis
                 moveDirectionZ = new Vector3(0f, 0f, moveDirection.z).normalized;
                 canMove = detector.CanMove(moveDirectionZ);
 
-                if(canMove)
-                {
-                    //Can Move Only On The Z-Axis
-                    moveDirection = moveDirectionZ;
-                }
+                if(canMove) /*Can Move Only On The Z-Axis*/ moveDirection = moveDirectionZ;
             }
         }
 
-        if(canMove)
-        {
-            transform.position += moveDirection * moveDistance;
-        }
+        if(canMove) transform.position += moveDirection * moveDistance;
         
         transform.forward += Vector3.Slerp(transform.forward, moveDirection, rotateSpeed * Time.deltaTime);
     }

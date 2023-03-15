@@ -1,5 +1,6 @@
 /*Keterangan : Code ini menggunakan prinsip SRP yang dimana code ini hanya bertanggung jawab untuk input dari player.*/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine;
 public class GameInputManager : MonoBehaviour
 {   
     #region singleton
-    public static GameInputManager Instance;
+    public static GameInputManager Instance {get; private set;}
 
     private void Awake()
     {
@@ -17,10 +18,19 @@ public class GameInputManager : MonoBehaviour
         }
     }
     #endregion
-
-    private PlayerInputActions playerInputActions;
+    
+    #region VectorVariables
     private Vector2 inputVector;
+    #endregion
+
+    #region BoolVariables
     [SerializeField] private bool useNewInputSystem;
+    #endregion
+
+    #region OtherVariables
+    private PlayerInputActions playerInputActions;
+    public event EventHandler OnInteractAction;
+    #endregion
 
     void Start()
     {
@@ -28,6 +38,21 @@ public class GameInputManager : MonoBehaviour
         {
             playerInputActions = new PlayerInputActions();
             playerInputActions.Player.Enable();
+            playerInputActions.Player.Interact.performed += Interact_performed;
+        }
+    }
+
+    private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnInteractAction?.Invoke(this,EventArgs.Empty);
+    }
+
+    void Update()
+    {
+        if(!useNewInputSystem)
+        {
+            if(Input.GetKey(KeyCode.E)) OnInteractAction?.Invoke(this,EventArgs.Empty);
+            else return; 
         }
     }
 

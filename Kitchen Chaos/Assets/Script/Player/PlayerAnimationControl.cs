@@ -6,11 +6,10 @@ using UnityEngine;
 
 public class PlayerAnimationControl : MonoBehaviour
 {
-    //Can Be Edit In Editor Variables
+    #region Variables
     [SerializeField] private PlayerController playerController;
-
-    //Other Variables
     private Animator playerAnimator;
+    #endregion
 
     private void Awake()
     {
