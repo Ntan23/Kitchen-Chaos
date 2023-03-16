@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 {
+    #region Singleton
     public static PlayerInteraction Instance {get; private set;}
 
     void Awake()
@@ -16,13 +17,12 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
             Instance = this;
         }
     }
+    #endregion
 
-    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
-
-    public class OnSelectedCounterChangedEventArgs : EventArgs 
-    {
-        public ClearCounter selectedCounter;
-    }
+    #region ForEvent
+    public delegate void OnSelectedCounterChange(BaseCounter selectedCounter);
+    public event OnSelectedCounterChange OnSelectedCounterChanged;
+    #endregion
 
     #region FloatVariables
     public float interactDistance;
@@ -37,11 +37,10 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     #region OtherVariables
     GameInputManager gameInputManager;
     Detector detector;
-    ClearCounter selectedCounter;
+    BaseCounter selectedCounter;
     private KitchenObjects kitchenObject;
     [SerializeField] private Transform kitchenObjectHoldPoint;
     #endregion
-
 
     // Start is called before the first frame update
     void Start()
@@ -50,14 +49,17 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
         detector = GetComponent<Detector>();
 
         gameInputManager.OnInteractAction += GameInput_OnInteractAction;
+        gameInputManager.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        if(selectedCounter != null)
-        {
-            selectedCounter.Interact(this);
-        }
+        if(selectedCounter != null) selectedCounter.Interact(this);
+    }
+
+    private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
+    {
+        if(selectedCounter != null) selectedCounter.InteractAlternate(this);
     }
 
     // Update is called once per frame
@@ -73,34 +75,23 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
         if(detector.isInteract)
         {   
-            if(detector.interactedObject.TryGetComponent(out ClearCounter counters))
+            if(detector.interactedObject.TryGetComponent(out BaseCounter counters))
             {
-                if(counters != selectedCounter)
-                {
-                    SetSelectedCouter(counters);
-                }
+                if(counters != selectedCounter) SetSelectedCouter(counters);
             }
-            else
-            {
-                SetSelectedCouter(null);
-            }
+            else SetSelectedCouter(null);
         }
-        else
-        {
-            SetSelectedCouter(null);
-        }
+        else SetSelectedCouter(null);
     }
 
-    private void SetSelectedCouter(ClearCounter selectedCounters)
+    private void SetSelectedCouter(BaseCounter selectedCounters)
     {
         selectedCounter = selectedCounters;
 
-        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs{
-            selectedCounter = selectedCounter
-        });
+        OnSelectedCounterChanged?.Invoke(selectedCounter);
     }
 
-    public Transform GetKitchenObjectFollowTransform()
+    public Transform GetKitchenObjectParentTransform()
     {
         return kitchenObjectHoldPoint;
     }

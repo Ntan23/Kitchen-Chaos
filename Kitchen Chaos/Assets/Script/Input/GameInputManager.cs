@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameInputManager : MonoBehaviour
 {   
@@ -29,7 +30,11 @@ public class GameInputManager : MonoBehaviour
 
     #region OtherVariables
     private PlayerInputActions playerInputActions;
+
+    #region ForEvent
     public event EventHandler OnInteractAction;
+    public event EventHandler OnInteractAlternateAction;
+    #endregion
     #endregion
 
     void Start()
@@ -39,20 +44,27 @@ public class GameInputManager : MonoBehaviour
             playerInputActions = new PlayerInputActions();
             playerInputActions.Player.Enable();
             playerInputActions.Player.Interact.performed += Interact_performed;
+            playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         }
     }
 
-    private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Interact_performed(InputAction.CallbackContext obj)
     {
         OnInteractAction?.Invoke(this,EventArgs.Empty);
+    }
+
+    private void InteractAlternate_performed(InputAction.CallbackContext obj)
+    {
+        OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
     }
 
     void Update()
     {
         if(!useNewInputSystem)
         {
-            if(Input.GetKey(KeyCode.E)) OnInteractAction?.Invoke(this,EventArgs.Empty);
-            else return; 
+            if(Input.GetKey(KeyCode.E)) OnInteractAction?.Invoke(this,EventArgs.Empty); 
+            if(Input.GetKey(KeyCode.F)) OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
+            else return;
         }
     }
 

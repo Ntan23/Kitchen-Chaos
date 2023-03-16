@@ -1,11 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
-public interface IClearCounter 
+public abstract class BaseCounters : MonoBehaviour , IKitchenObjectParent
 {
-    void Interact(Transform prefab, Transform counterTopPoint);
+    [SerializeField] Transform counterTopPoint;
+    private KitchenObjects kitchenObject;
+
+    public virtual void Interact(PlayerInteraction playerInteraction)
+    {
+        Debug.LogError("BaseCounter Interacted");
+    }
+
+    public Transform GetKitchenObjectParentTransform()
+    {
+        return counterTopPoint;
+    }
+
+    public void SetKitchenObject(KitchenObjects kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public KitchenObjects GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
+    }
+
+    // void Interact(Transform prefab, Transform counterTopPoint);
+}
+
+public class ClearCounterType : BaseCounters
+{
+    [SerializeField] KitchenObjectsSO kitchenObjectsSO;
+
+    public override void Interact(PlayerInteraction playerInteraction)
+    {
+        
+    }
+}
+
+
+public class ContainerCounterType : BaseCounters
+{
+    [SerializeField] KitchenObjectsSO kitchenObjectsSO;
+
+    public override void Interact(PlayerInteraction playerInteraction)
+    {
+        Transform kitchenObjectTransform = Instantiate(kitchenObjectsSO.prefab);
+        kitchenObjectTransform.GetComponent<KitchenObjects>().SetKitchenObjectParent(playerInteraction);
+
+        
+    }
 }
 
 // public abstract class Counter
@@ -36,39 +92,25 @@ public interface IClearCounter
 
 public enum counters 
 {
-    ClearCounter , NotClearCounter
+    ClearCounter , ContainerCounter
 }
 
-[System.Serializable]
 public class Counters : MonoBehaviour
 {
     public counters counterType;
-    [SerializeField] private Counters selectedCounter;
-    [SerializeField] private GameObject selectedVisual;
     [SerializeField] KitchenObjectsSO kitchenObjectsSO;
     [SerializeField] Transform counterTopPoint;
+    [SerializeField] PlayerInteraction playerInteraction;
+
+    #region ForEvent
+    public event ContainerAnimation OnPlayerGrabObject;
+    public delegate void ContainerAnimation();
+    #endregion
 
     // public void InteractCounter(Counter counter, Transform prefab, Transform counterTopPoint)
     // {
     //     counter.Interact(prefab, counterTopPoint);
     // }
-
-    void Start()
-    {
-        PlayerInteraction.Instance.OnSelectedCounterChanged += Interaction_OnSelectedCounterChanged;
-    }
-
-    private void Interaction_OnSelectedCounterChanged(object sender, PlayerInteraction.OnSelectedCounterChangedEventArgs e)
-    {
-        if(e.selectedCounter == selectedCounter)
-        {
-            selectedVisual.SetActive(true);
-        }
-        else if(e.selectedCounter != selectedCounter)
-        {
-            selectedVisual.SetActive(false);
-        }
-    }
 
     public void CheckWhichCounterIsInteracted()
     {
@@ -76,45 +118,18 @@ public class Counters : MonoBehaviour
         {
             case counters.ClearCounter :
                 // IClearCounter clearCounterInterface = new ClearCounter();
+                GetComponent<ClearCounterType>().Interact(playerInteraction);
                 // clearCounterInterface.Interact(kitchenObjectsSO.prefab, counterTopPoint);
                 // ClearCounter clearCounter =  new ClearCounter();
                 // InteractCounter(clearCounter, prefab, counterTopPoint);
                 break;
-            case counters.NotClearCounter :
+            case counters.ContainerCounter :
+                GetComponent<ContainerCounter>().Interact(playerInteraction);
+                OnPlayerGrabObject?.Invoke();
                 // NotClearCounter notClearCounter =  new NotClearCounter();
                 // InteractCounter(notClearCounter,null,null);
                 break;
         }
-    }
-}
-
-[CustomEditor(typeof(Counters))] // replace with the name of your component
-public class MyComponentEditor : Editor 
-{
-    private counters selectedOption;
-
-    public override void OnInspectorGUI()
-    {
-        serializedObject.Update();
-
-        // show the enum selector
-        selectedOption = (counters)EditorGUILayout.EnumPopup("Selected Counter Type", selectedOption);
-
-        // show/hide the variables based on the selected option
-        switch (selectedOption) {
-            case counters.ClearCounter:
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("selectedCounter"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("selectedVisual"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("kitchenObjectsSO"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("counterTopPoint"));
-                break;
-            default:
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("selectedCounter"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("selectedVisual"));
-                break;
-        }
-
-        serializedObject.ApplyModifiedProperties();
     }
 }
 

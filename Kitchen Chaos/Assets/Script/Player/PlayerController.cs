@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         {
             //Attempt Only On The X-Axis
             moveDirectionX = new Vector3(moveDirection.x, 0f, 0f).normalized;
-            canMove = detector.CanMove(moveDirectionX);
+            canMove = moveDirection.x != 0 && detector.CanMove(moveDirectionX);
 
             if(canMove) /*Can Move Only On The X-Axis*/ moveDirection = moveDirectionX;
             
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
             {
                 //Attempt Only On The Z-Axis
                 moveDirectionZ = new Vector3(0f, 0f, moveDirection.z).normalized;
-                canMove = detector.CanMove(moveDirectionZ);
+                canMove = moveDirection.z != 0 && detector.CanMove(moveDirectionZ);
 
                 if(canMove) /*Can Move Only On The Z-Axis*/ moveDirection = moveDirectionZ;
             }

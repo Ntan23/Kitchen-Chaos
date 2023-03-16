@@ -1,3 +1,5 @@
+/*Keterangan : Code ini menggunakan prinsip SRP yang dimana code ini hanya bertanggung jawab terhadap objek yang bisa diinteraksi oleh player.*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,8 +26,25 @@ public class KitchenObjects : MonoBehaviour
         
         kitchenObjectParent.SetKitchenObject(this);
 
-        transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
+        transform.parent = kitchenObjectParent.GetKitchenObjectParentTransform();
         transform.localPosition = Vector3.zero;
+    }
+
+    public void DestroyKitchenObject()
+    {
+        kitchenObjectParent.ClearKitchenObject();
+        Destroy(gameObject);
+    }
+
+    public static KitchenObjects SpawnKitchenObject(KitchenObjectsSO kitchenObjectsSO, IKitchenObjectParent kitchenObjectParent)
+    {
+        Transform kitchenObjectTransform = Instantiate(kitchenObjectsSO.prefab);
+        
+        KitchenObjects kitchenObject = kitchenObjectTransform.GetComponent<KitchenObjects>();
+
+        kitchenObject.SetKitchenObjectParent(kitchenObjectParent);
+
+        return kitchenObject;
     }
 
     public IKitchenObjectParent GetKitchenObjectParent()
