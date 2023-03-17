@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public bool IsWalking()
-    {
+    {   
         return isWalking = moveDirection != Vector3.zero;
     }
 }

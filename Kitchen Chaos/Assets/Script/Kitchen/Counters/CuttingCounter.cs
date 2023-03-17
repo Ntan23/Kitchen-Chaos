@@ -3,17 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter
+public class CuttingCounter : BaseCounter , IHasProgress
 {
     #region ForEvent
-    public delegate void CuttingCounterEvent(int sliceCount, int maxSliceCount);
-    public event CuttingCounterEvent OnCutProgressChanged;
     public event EventHandler OnCutAction;
+    public event IHasProgress.HasProgressCounterEvent OnProgressChanged;
+    public static event EventHandler SoundOnCutAction;
     #endregion
 
+    #region Variables
     [SerializeField] private CanBeSlicedKitchenObjectsSO[] canBeSlicedKitchenObjectsSO;
 
-    private int sliceCount;
+    private float sliceCount;
+    private float progress;
+    #endregion
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
@@ -27,13 +30,18 @@ public class CuttingCounter : BaseCounter
 
                     sliceCount = 0;
                 }
-                // else if(!CanBeSlicedKitchenObject(playerInteraction.GetKitchenObject().GetKitchenObjectsSO())) Debug.Log("That Cannot Be Cut");
             }
             else if(!playerInteraction.HasKitchenObject()) Debug.Log("Player Not Carrying Anything");
         }
         else if(HasKitchenObject())
         {
-            if(playerInteraction.HasKitchenObject()) Debug.Log("Player Carrying Something");
+            if(playerInteraction.HasKitchenObject())
+            {
+                if(playerInteraction.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if(plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())) GetKitchenObject().DestroyKitchenObject();
+                }
+            }
             else if(!playerInteraction.HasKitchenObject()) GetKitchenObject().SetKitchenObjectParent(playerInteraction);
         }
     }
@@ -46,12 +54,14 @@ public class CuttingCounter : BaseCounter
 
             CanBeSlicedKitchenObjectsSO canBeSlicedKitchenObjectSO = GetCanBeSlicedKitchenObject(GetKitchenObject().GetKitchenObjectsSO());
 
-            OnCutProgressChanged?.Invoke(sliceCount, canBeSlicedKitchenObjectSO.maxSliceCount);
+            progress = sliceCount/canBeSlicedKitchenObjectSO.maxSliceCount;
+            OnProgressChanged?.Invoke(progress);
             OnCutAction?.Invoke(this, EventArgs.Empty);
+            SoundOnCutAction?.Invoke(this, EventArgs.Empty);
             
             if(canBeSlicedKitchenObjectSO.maxSliceCount <= sliceCount)
             {
-                 KitchenObjectsSO kitchenObjectsSO = GetSlicedKitchenObject(GetKitchenObject().GetKitchenObjectsSO());
+                KitchenObjectsSO kitchenObjectsSO = GetSlicedKitchenObject(GetKitchenObject().GetKitchenObjectsSO());
 
                 GetKitchenObject().DestroyKitchenObject();
 

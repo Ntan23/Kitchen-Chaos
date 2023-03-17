@@ -22,6 +22,7 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     #region ForEvent
     public delegate void OnSelectedCounterChange(BaseCounter selectedCounter);
     public event OnSelectedCounterChange OnSelectedCounterChanged;
+    public event EventHandler SoundOnPickUpSomething;
     #endregion
 
     #region FloatVariables
@@ -54,11 +55,15 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
+        if(!GameManager.Instance.IsGamePlaying()) return;
+
         if(selectedCounter != null) selectedCounter.Interact(this);
     }
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
+        if(!GameManager.Instance.IsGamePlaying()) return;
+        
         if(selectedCounter != null) selectedCounter.InteractAlternate(this);
     }
 
@@ -99,6 +104,8 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     public void SetKitchenObject(KitchenObjects kitchenObject)
     {
         this.kitchenObject = kitchenObject;
+
+        if(kitchenObject != null) SoundOnPickUpSomething?.Invoke(this, EventArgs.Empty);
     }
 
     public KitchenObjects GetKitchenObject()

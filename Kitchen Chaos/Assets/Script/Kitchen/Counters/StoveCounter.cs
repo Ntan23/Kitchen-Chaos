@@ -3,26 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StoveCounter : BaseCounter
+public class StoveCounter : BaseCounter , IHasProgress
 {
     #region ForEvent 
     public delegate void StoveCounterEvent(State state);
     public event StoveCounterEvent OnStateChanged;
+    public event IHasProgress.HasProgressCounterEvent OnProgressChanged;
     #endregion
 
+    #region Enum
     public enum State {
         Idle,Frying,Fried,Burned
     }
 
     private State state;
+    #endregion
 
+    #region FloatVariables
+    private float cookTimer;
+    private float burnTimer;
+    private float progress;
+    #endregion
+
+    #region ScriptableObjectvariables
     [SerializeField] private CanBeCookedKitchenObjectsSO[] canBeCookedKitchenObjectsSO;
     [SerializeField] private CanBeBurnedKitchenObjectsSO[] canBeBurnedKitchenObjectsSO;
 
-    private float cookTimer;
-    private float burnTimer;
     CanBeCookedKitchenObjectsSO canBeCookedKitchenObjectSO;
     CanBeBurnedKitchenObjectsSO canBeBurnedKitchenObjectSO;
+    #endregion
 
     void Start()
     {
@@ -40,7 +49,10 @@ public class StoveCounter : BaseCounter
                 case State.Frying :
                     cookTimer += Time.deltaTime;
 
-                    if(cookTimer > canBeCookedKitchenObjectSO.maxTimeToCook)
+                    progress = cookTimer/canBeCookedKitchenObjectSO.maxTimeToCook;
+                    OnProgressChanged?.Invoke(progress);
+
+                    if(cookTimer > canBeCookedKitchenObjectSO.maxTimeToCook + 0.1f)
                     {
                         GetKitchenObject().DestroyKitchenObject();
 
@@ -55,6 +67,9 @@ public class StoveCounter : BaseCounter
                     break;
                 case State.Fried :
                     burnTimer += Time.deltaTime;
+
+                    progress = burnTimer/canBeBurnedKitchenObjectSO.maxTimeToBurn;
+                    OnProgressChanged?.Invoke(progress);
 
                     if(burnTimer > canBeBurnedKitchenObjectSO.maxTimeToBurn)
                     {
@@ -93,10 +108,32 @@ public class StoveCounter : BaseCounter
         }
         else if(HasKitchenObject())
         {
-            if(playerInteraction.HasKitchenObject()) Debug.Log("Player Carrying Something");
+            if(playerInteraction.HasKitchenObject())
+            {
+                if(playerInteraction.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if(plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())) 
+                    {
+                        GetKitchenObject().DestroyKitchenObject();
+                    
+                        if(state != State.Burned)
+                        {
+                            OnProgressChanged?.Invoke(0f);
+                        }
+
+                        state = State.Idle;
+                        OnStateChanged?.Invoke(state);
+                    }
+                }
+            }
             else if(!playerInteraction.HasKitchenObject()) 
             {
                 GetKitchenObject().SetKitchenObjectParent(playerInteraction);
+
+                if(state != State.Burned)
+                {
+                    OnProgressChanged?.Invoke(0f);
+                }
 
                 state = State.Idle;
                 OnStateChanged?.Invoke(state);
