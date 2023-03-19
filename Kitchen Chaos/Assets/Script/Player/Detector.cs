@@ -71,6 +71,7 @@ public class Detector : MonoBehaviour
 
 public class Collision : ICollisionDetector
 {
+    internal object gameObject;
     bool canMove;
 
     public bool DetectCollision(Vector3 moveDir , GameObject player, PlayerController playerController)

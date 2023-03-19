@@ -5,20 +5,36 @@ using UnityEngine;
 
 public class DeliveryManager : MonoBehaviour
 {
-    #region Singleton
+    #region Singleton & SetDifficulty
     public static DeliveryManager Instance {get; private set;}
 
     void Awake()
     {
         if(Instance == null) Instance = this;
+
+        difficultyIndex = PlayerPrefs.GetInt("Difficulty");
+
+        if(difficultyIndex == 1) 
+        {
+            maxWaitingRecipe = 2;
+            maxCompleteOrder = 4;
+        }
+        if(difficultyIndex == 2) 
+        {
+            maxWaitingRecipe = 3;
+            maxCompleteOrder = 7;
+        }
+        if(difficultyIndex == 3)
+        {
+            maxWaitingRecipe = 4;
+            maxCompleteOrder = 5;
+        } 
     }
     #endregion
 
     #region ForEvent
     public event EventHandler OnOrderSpawned;
     public event EventHandler OnOrderSent;
-    public event EventHandler SoundOnOrderComplete;
-    public event EventHandler SoundOnOrderFailed;
     #endregion
 
     #region FloatVariables
@@ -27,36 +43,51 @@ public class DeliveryManager : MonoBehaviour
     #endregion
 
     #region IntegerVariables
-    private int maxWaitingRecipe = 3;
+    private int maxWaitingRecipe;
     private int completedOrder;
+    private int maxCompleteOrder;
+    private int difficultyIndex;
     #endregion
 
     #region BoolVariables
     bool ingredientFound;
     bool plateIngredientsMatchesRecipe;
+    [HideInInspector] public bool win;
     #endregion
 
     #region OtherVariables
     [SerializeField] private RecipeListSO recipeListSO;
     private List<RecipeSO> waitingRecipeSOList = new List<RecipeSO>();
+    GameManager gm;
+    AudioManager audioManager;
     #endregion
+
+    void Start()
+    {
+        gm = GameManager.Instance;
+        audioManager = AudioManager.Instance;
+    }
 
     void Update()
     {
-        spawnRecipeTimer -= Time.deltaTime;
-
-        if(spawnRecipeTimer <= 0f)
+        if(gm.IsGamePlaying())
         {
-            spawnRecipeTimer = maxSpawnRecipeTimer;
+            spawnRecipeTimer -= Time.deltaTime;
 
-            if(maxWaitingRecipe > waitingRecipeSOList.Count)
+            if(spawnRecipeTimer <= 0f)
             {
-                RecipeSO waitingRecipeSO = recipeListSO.recipeList[UnityEngine.Random.Range(0,recipeListSO.recipeList.Count)];
+                spawnRecipeTimer = maxSpawnRecipeTimer;
 
-                waitingRecipeSOList.Add(waitingRecipeSO);
-                OnOrderSpawned?.Invoke(this, EventArgs.Empty);
+                if(maxWaitingRecipe > waitingRecipeSOList.Count)
+                {
+                    RecipeSO waitingRecipeSO = recipeListSO.recipeList[UnityEngine.Random.Range(0,recipeListSO.recipeList.Count)];
+
+                    waitingRecipeSOList.Add(waitingRecipeSO);
+                    OnOrderSpawned?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
+        else return;
     }
 
     public void DeliverRecipe(PlateKitchenObject plateKitchenObject)
@@ -96,14 +127,19 @@ public class DeliveryManager : MonoBehaviour
                     waitingRecipeSOList.RemoveAt(i);
                     completedOrder++;
                     OnOrderSent?.Invoke(this, EventArgs.Empty);
-                    SoundOnOrderComplete?.Invoke(this, EventArgs.Empty);
+                    audioManager.DeliveryManager_SoundOnOrderComplete();
+
+                    if(completedOrder >= maxCompleteOrder)
+                    {
+                        win = true;
+                    }
                     return;
                 }
             }
         }
 
         //No Match Found
-        SoundOnOrderFailed?.Invoke(this, EventArgs.Empty);
+        audioManager.DeliveryManager_SoundOnOrderFailed();
     }
 
     public List<RecipeSO> GetWaitingRecipeSOList()
@@ -114,5 +150,10 @@ public class DeliveryManager : MonoBehaviour
     public int GetCompleteAmount()
     {
         return completedOrder;
+    }
+
+    public int GetMaxCompleAmount()
+    {
+        return maxCompleteOrder;
     }
 }

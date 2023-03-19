@@ -18,6 +18,5 @@ public class ContainerCounter : BaseCounter
 
             OnPlayerGrabObject?.Invoke(this, EventArgs.Empty);
         }
-        else if(playerInteraction.HasKitchenObject()) Debug.Log("Player Already Carrying Something");
     }
 }

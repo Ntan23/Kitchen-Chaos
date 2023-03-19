@@ -5,10 +5,6 @@ using UnityEngine;
 
 public class BaseCounter : MonoBehaviour , IKitchenObjectParent
 {
-    #region ForEvent
-    public static event EventHandler SoundOnDropSomething;
-    #endregion
-
     #region Variables
     [SerializeField] Transform counterTopPoint;
     private KitchenObjects kitchenObject;
@@ -33,7 +29,7 @@ public class BaseCounter : MonoBehaviour , IKitchenObjectParent
     {
         this.kitchenObject = kitchenObject;
 
-        if(kitchenObject != null) SoundOnDropSomething?.Invoke(this, EventArgs.Empty);
+        if(kitchenObject != null) AudioManager.Instance.BaseCounters_SoundOnDropSomething();
     }
 
     public KitchenObjects GetKitchenObject()

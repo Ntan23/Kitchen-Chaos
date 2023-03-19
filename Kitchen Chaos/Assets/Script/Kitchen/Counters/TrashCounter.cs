@@ -5,16 +5,19 @@ using UnityEngine;
 
 public class TrashCounter : BaseCounter
 {
-    #region ForEvent
-    public static event EventHandler SoundOnTrashSomething;
-    #endregion
+    AudioManager audioManager;
+
+    void Start()
+    {
+        audioManager = AudioManager.Instance;
+    }
 
     public override void Interact(PlayerInteraction playerInteraction)
     {
         if(playerInteraction.HasKitchenObject()) 
         {
             playerInteraction.GetKitchenObject().DestroyKitchenObject();
-            SoundOnTrashSomething?.Invoke(this, EventArgs.Empty);
+            audioManager.TrashCounter_SoundOnTrashSomething();
         }
     }
 }

@@ -1,85 +1,114 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
     #region Singleton
     public static AudioManager Instance {get; private set;}
-
     void Awake()
     {
         if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
+
+        foreach(Sound s in soundEffects)
+        {
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+            s.source.outputAudioMixerGroup = s.audioMixer;
+        }
     }
     #endregion
 
     [SerializeField] private SFX_SO sfx_SO;
-    DeliveryManager deliveryManager;
+    [SerializeField] private Sound[] soundEffects;
+    [SerializeField] Settings settings;
+
     // Start is called before the first frame update
     void Start()
     {
-        deliveryManager = DeliveryManager.Instance;
-
-        deliveryManager.SoundOnOrderComplete += DeliveryManager_SoundOnOrderComplete;
-
-        deliveryManager.SoundOnOrderFailed += DeliveryManager_SoundOnOrderFailed;
-
-        CuttingCounter.SoundOnCutAction += CuttingCounter_SoundOnCutAction;
-
-        PlayerInteraction.Instance.SoundOnPickUpSomething += PlayerInteraction_SoundOnPickUpSomething;
         
-        BaseCounter.SoundOnDropSomething += BaseCounters_SoundOnDropSomething;
-
-        TrashCounter.SoundOnTrashSomething += TrashCounter_SoundOnTrashSomething;
     }
 
-    private void TrashCounter_SoundOnTrashSomething(object sender, System.EventArgs e)
+    public void Play(string name)
     {
-        TrashCounter trashCounter = sender as TrashCounter;
-        PlaySFX(sfx_SO.trashSFX, trashCounter.transform.position);
+        Sound s = Array.Find(soundEffects,sound=>sound.name==name);
+
+        if(s == null)
+        {
+            //Debug.LogWarning("Sound :"+name+" not found");
+            return;
+        }
+
+        s.source.PlayOneShot(s.clip);
+    }
+    
+    public void TrashCounter_SoundOnTrashSomething()
+    {
+        int randomIndex = UnityEngine.Random.Range(0,2);
+
+        if(randomIndex == 0) Play("Trash1");
+        else Play("Trash2");
     }
 
-    private void BaseCounters_SoundOnDropSomething(object sender, System.EventArgs e)
+    public void BaseCounters_SoundOnDropSomething()
     {
-        BaseCounter baseCounter = sender as BaseCounter;
-        PlaySFX(sfx_SO.objectDropSFX, baseCounter.transform.position);
+        int randomIndex = UnityEngine.Random.Range(0,3);
+
+        if(randomIndex == 0) Play("Drop1");
+        else if(randomIndex == 1) Play("Drop2");
+        else Play("Drop3");
     }
 
-    private void PlayerInteraction_SoundOnPickUpSomething(object sender, System.EventArgs e)
+    public void PlayerInteraction_SoundOnPickUpSomething()
     {
-        PlaySFX(sfx_SO.objectPickUpSFX, PlayerInteraction.Instance.transform.position);
+        int randomIndex = UnityEngine.Random.Range(0,3);
+
+        if(randomIndex == 0) Play("PickUp1");
+        else if(randomIndex == 1) Play("PickUp2");
+        else Play("PickUp3");
     }
 
-    private void CuttingCounter_SoundOnCutAction(object sender, System.EventArgs e)
+    public void CuttingCounter_SoundOnCutAction()
     {
-        CuttingCounter cuttingCounter = sender as CuttingCounter;
-        PlaySFX(sfx_SO.chopSFX, cuttingCounter.transform.position);
+        int randomIndex = UnityEngine.Random.Range(0,3);
+
+        if(randomIndex == 0) Play("Chop1");
+        else if(randomIndex == 1) Play("Chop2");
+        else Play("Chop3");
     }
 
-    private void DeliveryManager_SoundOnOrderComplete(object sender, System.EventArgs e)
+    public void DeliveryManager_SoundOnOrderComplete()
     {
-        DeliveryCounter deliveryCounter = DeliveryCounter.Instance;
-        PlaySFX(sfx_SO.deliveryCompleteSFX, deliveryCounter.transform.position);
+        int randomIndex = UnityEngine.Random.Range(0,2);
+
+        if(randomIndex == 0) Play("DeliverySuccess1");
+        else Play("DeliverySuccess2");
     }
 
-    private void DeliveryManager_SoundOnOrderFailed(object sender, System.EventArgs e)
+    public void DeliveryManager_SoundOnOrderFailed()
     {
-        DeliveryCounter deliveryCounter = DeliveryCounter.Instance;
-        PlaySFX(sfx_SO.deliveryFailedSFX, deliveryCounter.transform.position);
-    }
+        int randomIndex = UnityEngine.Random.Range(0,2);
 
-    private void PlaySound(AudioClip audioClip, Vector3 position, float volume = 1.0f)
-    {
-        AudioSource.PlayClipAtPoint(audioClip, position, volume);
-    }
-
-    private void PlaySFX(AudioClip[] audioClip, Vector3 position, float volume = 1.0f)
-    {
-        PlaySound(audioClip[Random.Range(0,audioClip.Length)], position, volume);
+        if(randomIndex == 0) Play("DeliveryFail1");
+        else Play("DeliveryFail2");
     }
 
     public void PlayFootstepSound(Vector3 position)
     {
-        PlaySFX(sfx_SO.footstepSFX, position);
+        //PlaySFX(sfx_SO.footstepSFX, position);
+        int randomIndex = UnityEngine.Random.Range(0,4);
+
+        if(randomIndex == 0) Play("Footstep1");
+        else if(randomIndex == 1) Play("Footstep2");
+        else if(randomIndex == 2) Play("Footstep3");
+        else Play("Footstep4");
     }
 }

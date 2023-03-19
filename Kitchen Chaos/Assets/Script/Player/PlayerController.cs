@@ -33,20 +33,22 @@ public class PlayerController : MonoBehaviour
     GameInputManager gameInputManager;
     CollisionDetector collisionDetector;
     Detector detector;
+    GameManager gm;
     #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         gameInputManager = GameInputManager.Instance;
-        // collisionDetector = GetComponent<CollisionDetector>();
+        gm = GameManager.Instance;
+
         detector = GetComponent<Detector>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoveAndRotate();
+        if(gm.IsGamePlaying()) MoveAndRotate();
     }
 
     private void MoveAndRotate()
@@ -83,6 +85,9 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {   
-        return isWalking = moveDirection != Vector3.zero;
+        if(gm.IsGamePlaying()) isWalking = moveDirection != Vector3.zero;
+        else isWalking = false;
+
+        return isWalking;
     }
 }

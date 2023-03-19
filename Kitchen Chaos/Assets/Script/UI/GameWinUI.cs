@@ -5,10 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class GameOverUI : MonoBehaviour
+public class GameWinUI : MonoBehaviour
 {
     #region Variables
-    [SerializeField] private TextMeshProUGUI completeOrderDeliveredText;
     [SerializeField] private Button retryButton;
     [SerializeField] private Button mainMenuButton;
     GameManager gm;
@@ -36,12 +35,11 @@ public class GameOverUI : MonoBehaviour
 
     private void GameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if(!deliveryManager.win)
+        if(deliveryManager.win)
         {
             if(gm.IsGameOver()) 
             {
                 gameObject.SetActive(true);
-                completeOrderDeliveredText.text = deliveryManager.GetCompleteAmount().ToString() + " / " + deliveryManager.GetMaxCompleAmount().ToString();
             }
             else gameObject.SetActive(false);
         }

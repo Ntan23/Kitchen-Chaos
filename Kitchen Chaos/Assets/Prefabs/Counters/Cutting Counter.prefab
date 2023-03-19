@@ -217,6 +217,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62e41ee2bf302194ba753b818b943124, type: 3}
+--- !u!1 &7948956591759325974 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4784733282831711718, guid: 62e41ee2bf302194ba753b818b943124,
+    type: 3}
+  m_PrefabInstance: {fileID: 3185897022397630192}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4915785058448339676
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -481,6 +487,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4d2a6bbee3ded764398ba7707595f2d6, type: 2}
   - {fileID: 11400000, guid: 950011169668a624fa995dcf15286f60, type: 2}
   - {fileID: 11400000, guid: eef78695069857f45a41d464323bb084, type: 2}
+  progressBar: {fileID: 7948956591759325974}
 --- !u!4 &8802831311464619362 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1944931209486927465, guid: d6f9a9166d67db943a6e8e0547b9069c,

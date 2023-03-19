@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class PlayerFootstepSound : MonoBehaviour
 {
-    private PlayerController playerController;
+    #region FloatVariables
     private float footstepTimer;
     private float maxFootstepTimer = 0.15f;
+    #endregion
+
+    #region Othervariables
+    private PlayerController playerController;
+    private GameManager gm;
+    #endregion
 
     void Awake()
     {   

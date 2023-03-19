@@ -22,7 +22,6 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     #region ForEvent
     public delegate void OnSelectedCounterChange(BaseCounter selectedCounter);
     public event OnSelectedCounterChange OnSelectedCounterChanged;
-    public event EventHandler SoundOnPickUpSomething;
     #endregion
 
     #region FloatVariables
@@ -37,6 +36,7 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
     #region OtherVariables
     GameInputManager gameInputManager;
+    AudioManager audioManager;
     Detector detector;
     BaseCounter selectedCounter;
     private KitchenObjects kitchenObject;
@@ -47,6 +47,8 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     void Start()
     {
         gameInputManager = GameInputManager.Instance;
+        audioManager = AudioManager.Instance;
+        
         detector = GetComponent<Detector>();
 
         gameInputManager.OnInteractAction += GameInput_OnInteractAction;
@@ -55,15 +57,11 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        if(!GameManager.Instance.IsGamePlaying()) return;
-
         if(selectedCounter != null) selectedCounter.Interact(this);
     }
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        if(!GameManager.Instance.IsGamePlaying()) return;
-        
         if(selectedCounter != null) selectedCounter.InteractAlternate(this);
     }
 
@@ -105,7 +103,7 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     {
         this.kitchenObject = kitchenObject;
 
-        if(kitchenObject != null) SoundOnPickUpSomething?.Invoke(this, EventArgs.Empty);
+        if(kitchenObject != null) audioManager.PlayerInteraction_SoundOnPickUpSomething();
     }
 
     public KitchenObjects GetKitchenObject()

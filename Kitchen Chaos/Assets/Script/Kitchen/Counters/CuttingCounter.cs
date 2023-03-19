@@ -8,16 +8,22 @@ public class CuttingCounter : BaseCounter , IHasProgress
     #region ForEvent
     public event EventHandler OnCutAction;
     public event IHasProgress.HasProgressCounterEvent OnProgressChanged;
-    public static event EventHandler SoundOnCutAction;
     #endregion
 
     #region Variables
     [SerializeField] private CanBeSlicedKitchenObjectsSO[] canBeSlicedKitchenObjectsSO;
+    AudioManager audioManager;
 
     private float sliceCount;
     private float progress;
+    private bool isComplete;
     #endregion
 
+    void Start()
+    {
+        audioManager = AudioManager.Instance;
+    }
+    
     public override void Interact(PlayerInteraction playerInteraction)
     {
         if(!HasKitchenObject())
@@ -42,7 +48,16 @@ public class CuttingCounter : BaseCounter , IHasProgress
                     if(plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())) GetKitchenObject().DestroyKitchenObject();
                 }
             }
-            else if(!playerInteraction.HasKitchenObject()) GetKitchenObject().SetKitchenObjectParent(playerInteraction);
+            else if(!playerInteraction.HasKitchenObject()) 
+            {
+                GetKitchenObject().SetKitchenObjectParent(playerInteraction);
+                
+                if(!isComplete) 
+                {
+                    OnProgressChanged?.Invoke(0f);
+                    isComplete = false;
+                }
+            }
         }
     }
 
@@ -57,7 +72,8 @@ public class CuttingCounter : BaseCounter , IHasProgress
             progress = sliceCount/canBeSlicedKitchenObjectSO.maxSliceCount;
             OnProgressChanged?.Invoke(progress);
             OnCutAction?.Invoke(this, EventArgs.Empty);
-            SoundOnCutAction?.Invoke(this, EventArgs.Empty);
+            //SoundOnCutAction?.Invoke(this, EventArgs.Empty);
+            audioManager.CuttingCounter_SoundOnCutAction();
             
             if(canBeSlicedKitchenObjectSO.maxSliceCount <= sliceCount)
             {
@@ -66,6 +82,7 @@ public class CuttingCounter : BaseCounter , IHasProgress
                 GetKitchenObject().DestroyKitchenObject();
 
                 KitchenObjects.SpawnKitchenObject(kitchenObjectsSO, this);
+                isComplete = true;
             }
         }
     }
