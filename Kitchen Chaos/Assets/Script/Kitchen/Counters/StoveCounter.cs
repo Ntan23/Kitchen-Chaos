@@ -176,5 +176,8 @@ public class StoveCounter : BaseCounter , IHasProgress
         return canBeCookedKitchenObjectSO != null;
     }
 
-    
+    public State GetState()
+    {
+        return state;
+    }
 }
