@@ -71,7 +71,7 @@ public class StoveCounter : BaseCounter , IHasProgress
                     progress = burnTimer/canBeBurnedKitchenObjectSO.maxTimeToBurn;
                     OnProgressChanged?.Invoke(progress);
 
-                    if(burnTimer > canBeBurnedKitchenObjectSO.maxTimeToBurn)
+                    if(burnTimer > canBeBurnedKitchenObjectSO.maxTimeToBurn + 0.1f)
                     {
                         GetKitchenObject().DestroyKitchenObject();
 
@@ -104,7 +104,6 @@ public class StoveCounter : BaseCounter , IHasProgress
                     OnStateChanged?.Invoke(state);
                 }
             }
-            else if(!playerInteraction.HasKitchenObject()) Debug.Log("Player Not Carrying Anything");
         }
         else if(HasKitchenObject())
         {

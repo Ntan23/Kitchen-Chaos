@@ -26,16 +26,7 @@ public class AudioManager : MonoBehaviour
         }
     }
     #endregion
-
-    [SerializeField] private SFX_SO sfx_SO;
     [SerializeField] private Sound[] soundEffects;
-    [SerializeField] Settings settings;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     public void Play(string name)
     {
@@ -103,12 +94,19 @@ public class AudioManager : MonoBehaviour
 
     public void PlayFootstepSound(Vector3 position)
     {
-        //PlaySFX(sfx_SO.footstepSFX, position);
         int randomIndex = UnityEngine.Random.Range(0,4);
 
         if(randomIndex == 0) Play("Footstep1");
         else if(randomIndex == 1) Play("Footstep2");
         else if(randomIndex == 2) Play("Footstep3");
         else Play("Footstep4");
+    }
+
+    public void PlayWarningSound()
+    {
+        int randomIndex = UnityEngine.Random.Range(0,2);
+
+        if(randomIndex == 0) Play("Warning1");
+        else Play("Warning2");
     }
 }

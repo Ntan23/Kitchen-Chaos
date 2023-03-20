@@ -142,7 +142,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eac811018ffbd343ab8411a1eb29f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sfx_SO: {fileID: 11400000, guid: 1c4df1a5fcf489b4f99aa01ea49b92fe, type: 2}
   soundEffects:
   - name: Chop1
     clip: {fileID: 8300000, guid: e519f586b4ac0904e877dfab85ed729e, type: 3}
@@ -312,4 +311,3 @@ MonoBehaviour:
     source: {fileID: 0}
     audioMixer: {fileID: 8842944895041281513, guid: 194b1350e2842e34b941a2d2fca69ae4,
       type: 2}
-  settings: {fileID: 0}

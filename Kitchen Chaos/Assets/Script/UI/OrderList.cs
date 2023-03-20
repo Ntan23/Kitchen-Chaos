@@ -38,7 +38,17 @@ public class OrderList : MonoBehaviour
         foreach(RecipeSO recipeSO in deliveryManager.GetWaitingRecipeSOList())
         {
             Transform recipeTransform = Instantiate(recipeTemplate, container);
+
+            StartCoroutine(AnimateSpawn(recipeTransform.gameObject));
+
             recipeTransform.GetComponent<OrderListSingleUI>().SetRecipeSO(recipeSO);
         }   
+    }
+
+    IEnumerator AnimateSpawn(GameObject gameObject)
+    {
+        LeanTween.scale(gameObject, new Vector3(1.1f,1.1f,1.1f), 0.3f);
+        yield return new WaitForSeconds(0.2f);
+        LeanTween.scale(gameObject, new Vector3(1.0f,1.0f,1.0f), 0.3f);
     }
 }

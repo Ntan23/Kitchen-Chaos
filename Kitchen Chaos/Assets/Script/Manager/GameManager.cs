@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
         difficultyIndex = PlayerPrefs.GetInt("Difficulty");
 
-        if(difficultyIndex == 1) maxGameplayTimer = 240.0f;
+        if(difficultyIndex == 1) maxGameplayTimer = 180.0f;
         if(difficultyIndex == 2) maxGameplayTimer = 120.0f;
         if(difficultyIndex == 3) maxGameplayTimer = 60.0f;
     }
@@ -36,7 +36,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region FloatVariables
-    private float WaitToStartTimer = 0.5f;
     private float countdownToStartTimer = 3.0f;
     private float gameplayTimer;
     private float maxGameplayTimer;
@@ -62,11 +61,21 @@ public class GameManager : MonoBehaviour
         state = State.WaitToStart;
 
         gameInputManager.OnPauseAction += GameInput_OnPauseAction;
+        gameInputManager.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
+    {
+        if(state == State.WaitToStart)
+        {
+            state = State.CountdownToStart;
+            OnStateChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
     {
-        TogglePauseGame();
+        if(state == State.GameIsPlaying) TogglePauseGame();
     }
 
     // Update is called once per frame
@@ -75,13 +84,6 @@ public class GameManager : MonoBehaviour
         switch(state)
         {
             case State.WaitToStart :
-                WaitToStartTimer -= Time.deltaTime;
-
-                if(WaitToStartTimer < 0f) 
-                {
-                    state = State.CountdownToStart;
-                    OnStateChanged?.Invoke(this, EventArgs.Empty);
-                }
                 break;
             case State.CountdownToStart :
                 countdownToStartTimer -= Time.deltaTime;
@@ -113,6 +115,11 @@ public class GameManager : MonoBehaviour
             case State.GameOver :
                 break;
         }
+    }
+
+    public bool IsWaitingToStart()
+    {
+        return state == State.WaitToStart;
     }
 
     public bool IsCountdownStarted()

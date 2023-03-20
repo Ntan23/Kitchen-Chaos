@@ -24,10 +24,4 @@ public class StoveCounterOnAndOff : MonoBehaviour
         stoveOnEffect.SetActive(isOn);
         stoveParticlesFX.SetActive(isOn);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

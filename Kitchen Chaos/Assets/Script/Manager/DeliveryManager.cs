@@ -18,16 +18,19 @@ public class DeliveryManager : MonoBehaviour
         {
             maxWaitingRecipe = 2;
             maxCompleteOrder = 4;
+            maxSpawnRecipeTimer = 6.0f;
         }
         if(difficultyIndex == 2) 
         {
             maxWaitingRecipe = 3;
             maxCompleteOrder = 7;
+            maxSpawnRecipeTimer = 5.0f;
         }
         if(difficultyIndex == 3)
         {
-            maxWaitingRecipe = 4;
+            maxWaitingRecipe = 2;
             maxCompleteOrder = 5;
+            maxSpawnRecipeTimer = 4.0f;
         } 
     }
     #endregion
@@ -38,8 +41,8 @@ public class DeliveryManager : MonoBehaviour
     #endregion
 
     #region FloatVariables
-    private float spawnRecipeTimer;
-    private float maxSpawnRecipeTimer = 4.0f;
+    private float spawnRecipeTimer = 0.5f;
+    private float maxSpawnRecipeTimer;
     #endregion
 
     #region IntegerVariables

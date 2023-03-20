@@ -33,21 +33,39 @@ public class ProgressBar : MonoBehaviour
 
         if(progressBarImg.fillAmount == 0.0f || progressBarImg.fillAmount == 1.0f) StartCoroutine(Hide());
         else gameObject.SetActive(true);
+
+        if(hasProgressGO.GetComponent<StoveCounter>() != null)
+        {   
+            if(hasProgressGO.GetComponent<StoveCounter>().GetState() == StoveCounter.State.Fried)
+            {   
+                bool show = progressValue >= 0.5f;
+
+                if(show)
+                {   
+                    void UpdateBarColor(Color color)
+                    {
+                        progressBarImg.color = color;
+                    }
+
+                    LeanTween.value(progressBarImg.gameObject, UpdateBarColor, Color.red, Color.yellow, 0.3f);
+                }
+            }
+        }
     }
 
     private void UpdateProgressBarColor()
     {
-        if(progressBarImg.fillAmount <= 0.3f)
+        if(progressBarImg.fillAmount <= 0.3f) progressBarImg.color = Color.red;
+        else if(progressBarImg.fillAmount > 0.3f && progressBarImg.fillAmount <= 0.7f) progressBarImg.color = Color.yellow;
+        else if(progressBarImg.fillAmount > 0.7f) progressBarImg.color = Color.green;
+        
+        if(hasProgressGO.GetComponent<StoveCounter>() != null)
         {
-            progressBarImg.color = Color.red;
-        }
-        else if(progressBarImg.fillAmount > 0.3f && progressBarImg.fillAmount <= 0.7f)
-        {
-            progressBarImg.color = Color.yellow;
-        }
-        else if(progressBarImg.fillAmount > 0.7f)
-        {
-            progressBarImg.color = Color.green;
+            if(hasProgressGO.GetComponent<StoveCounter>().GetState() == StoveCounter.State.Fried)
+            {
+                if(progressBarImg.fillAmount <= 0.3f) progressBarImg.color = Color.green;
+                else if(progressBarImg.fillAmount > 0.3f && progressBarImg.fillAmount <= 0.4f) progressBarImg.color = Color.yellow;
+            }
         }
     }
 

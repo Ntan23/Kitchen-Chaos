@@ -11,8 +11,8 @@ public class PlatesCounter : BaseCounter
     #endregion
 
     #region FloatVariables
-    private float spawnPlateTimer;
-    [SerializeField] private float maxSpawnPlateTimer;
+    private float spawnPlateTimer = 3.5f;
+    private float maxSpawnPlateTimer = 4.0f;
     #endregion
 
     #region IntegerVariables
@@ -22,23 +22,33 @@ public class PlatesCounter : BaseCounter
 
     #region OtherVariables
     [SerializeField] KitchenObjectsSO plateSO;
+    GameManager gm;
     #endregion
+
+    void Start()
+    {
+        gm = GameManager.Instance;
+    }
 
     void Update()
     {
-        spawnPlateTimer += Time.deltaTime;
-
-        if(spawnPlateTimer > maxSpawnPlateTimer)
+        if(gm.IsGamePlaying())
         {
-            spawnPlateTimer = 0.0f;
+            spawnPlateTimer += Time.deltaTime;
 
-            if(maxPlatesSpawnedAmount > platesSpawnedAmount)
+            if(spawnPlateTimer > maxSpawnPlateTimer)
             {
-                platesSpawnedAmount++;
+                spawnPlateTimer = 0.0f;
 
-                OnPlateSpawnned?.Invoke(this, EventArgs.Empty);
+                if(maxPlatesSpawnedAmount > platesSpawnedAmount)
+                {
+                    platesSpawnedAmount++;
+
+                    OnPlateSpawnned?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
+        else return;
     }
 
     public override void Interact(PlayerInteraction playerInteraction)

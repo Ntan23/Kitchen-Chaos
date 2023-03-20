@@ -11,7 +11,6 @@ public class ClearCounter : BaseCounter
         if(!HasKitchenObject())
         {
             if(playerInteraction.HasKitchenObject()) playerInteraction.GetKitchenObject().SetKitchenObjectParent(this);
-            else if(!playerInteraction.HasKitchenObject()) Debug.Log("Player Not Carrying Anything");
         }
         else if(HasKitchenObject())
         {

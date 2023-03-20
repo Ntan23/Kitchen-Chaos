@@ -26,6 +26,13 @@ public class GameInputManager : MonoBehaviour
     }
     #endregion
     
+    #region ForEvent
+    public event EventHandler OnInteractAction;
+    public event EventHandler OnInteractAlternateAction;
+    public event EventHandler OnPauseAction;
+    public event EventHandler OnKeyRebind;
+    #endregion
+
     #region VectorVariables
     private Vector2 inputVector;
     #endregion
@@ -33,16 +40,10 @@ public class GameInputManager : MonoBehaviour
     #region OtherVariables
     private PlayerInputActions playerInputActions;
     GameManager gm;
-
-    #region ForEvent
-    public event EventHandler OnInteractAction;
-    public event EventHandler OnInteractAlternateAction;
-    public event EventHandler OnPauseAction;
-    #endregion
     #endregion
 
     public enum Binding {
-        MoveUp, MoveDown, MoveLeft, MoveRight, Interact, Cut, Pause
+        MoveUp, MoveDown, MoveLeft, MoveRight, Interact, InteractAlternate, Pause
     }
 
     void  Start()
@@ -64,7 +65,7 @@ public class GameInputManager : MonoBehaviour
 
     private void Interact_performed(InputAction.CallbackContext obj)
     {
-        if(gm.IsGamePlaying()) OnInteractAction?.Invoke(this,EventArgs.Empty);
+        if(gm.IsWaitingToStart() || gm.IsGamePlaying()) OnInteractAction?.Invoke(this,EventArgs.Empty);
         else if(!gm.IsGamePlaying()) return;
     }
 
@@ -107,7 +108,7 @@ public class GameInputManager : MonoBehaviour
                 return playerInputActions.Player.Movement.bindings[4].ToDisplayString();    
             case Binding.Interact :
                 return playerInputActions.Player.Interact.bindings[0].ToDisplayString();
-            case Binding.Cut :
+            case Binding.InteractAlternate :
                 return playerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString();
             case Binding.Pause :
                 return playerInputActions.Player.Pause.bindings[0].ToDisplayString();
@@ -144,7 +145,7 @@ public class GameInputManager : MonoBehaviour
                 inputAction = playerInputActions.Player.Interact;
                 bindingIndex = 0;
                 break;
-            case Binding.Cut :
+            case Binding.InteractAlternate :
                 inputAction = playerInputActions.Player.InteractAlternate;
                 bindingIndex = 0;
                 break;
@@ -161,6 +162,8 @@ public class GameInputManager : MonoBehaviour
             
             PlayerPrefs.SetString("InputBinding",playerInputActions.SaveBindingOverridesAsJson());
             PlayerPrefs.Save();
+            
+            OnKeyRebind?.Invoke(this, EventArgs.Empty);
         }).Start();
     }
 }

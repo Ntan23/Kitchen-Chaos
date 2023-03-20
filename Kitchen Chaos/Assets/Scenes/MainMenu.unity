@@ -1144,14 +1144,14 @@ MonoBehaviour:
   moveLeftText: {fileID: 0}
   moveRightText: {fileID: 0}
   interactText: {fileID: 0}
-  cutText: {fileID: 0}
+  interactAlternateText: {fileID: 0}
   pauseText: {fileID: 0}
   moveUpKey: {fileID: 0}
   moveDownKey: {fileID: 0}
   moveLeftKey: {fileID: 0}
   moveRightKey: {fileID: 0}
   interactKey: {fileID: 0}
-  cutKey: {fileID: 0}
+  interactAlternateKey: {fileID: 0}
   pauseKey: {fileID: 0}
 --- !u!1 &245522450
 GameObject:
@@ -2640,14 +2640,14 @@ MonoBehaviour:
   moveLeftText: {fileID: 580265412}
   moveRightText: {fileID: 142707369}
   interactText: {fileID: 1045150787}
-  cutText: {fileID: 1623144370}
+  interactAlternateText: {fileID: 502219286}
   pauseText: {fileID: 134477440}
   moveUpKey: {fileID: 821551237}
   moveDownKey: {fileID: 1175226487}
   moveLeftKey: {fileID: 1646322344}
   moveRightKey: {fileID: 1104949262}
   interactKey: {fileID: 295320981}
-  cutKey: {fileID: 694947606}
+  interactAlternateKey: {fileID: 694947606}
   pauseKey: {fileID: 1694068981}
 --- !u!114 &631683526
 MonoBehaviour:

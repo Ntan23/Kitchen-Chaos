@@ -32,7 +32,7 @@ public class Settings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI moveLeftText;
     [SerializeField] private TextMeshProUGUI moveRightText;
     [SerializeField] private TextMeshProUGUI interactText;
-    [SerializeField] private TextMeshProUGUI cutText;
+    [SerializeField] private TextMeshProUGUI interactAlternateText;
     [SerializeField] private TextMeshProUGUI pauseText;
     #endregion
 
@@ -43,7 +43,7 @@ public class Settings : MonoBehaviour
     [SerializeField] private Button moveLeftKey;
     [SerializeField] private Button moveRightKey;
     [SerializeField] private Button interactKey;
-    [SerializeField] private Button cutKey;
+    [SerializeField] private Button interactAlternateKey;
     [SerializeField] private Button pauseKey;
     #endregion
     
@@ -69,8 +69,8 @@ public class Settings : MonoBehaviour
             RebindBinding(GameInputManager.Binding.Interact);
         });
 
-        cutKey.onClick.AddListener(() => {
-            RebindBinding(GameInputManager.Binding.Cut);
+        interactAlternateKey.onClick.AddListener(() => {
+            RebindBinding(GameInputManager.Binding.InteractAlternate);
         });
 
         pauseKey.onClick.AddListener(() => {
@@ -109,12 +109,6 @@ public class Settings : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ChangeBGMVolume(float value)
     {
         //BGMAudioSource.volume = value;
@@ -136,7 +130,7 @@ public class Settings : MonoBehaviour
         moveLeftText.text = gameInputManager.GetBindingText(GameInputManager.Binding.MoveLeft);
         moveRightText.text = gameInputManager.GetBindingText(GameInputManager.Binding.MoveRight);
         interactText.text = gameInputManager.GetBindingText(GameInputManager.Binding.Interact);
-        cutText.text = gameInputManager.GetBindingText(GameInputManager.Binding.Cut);
+        interactAlternateText.text = gameInputManager.GetBindingText(GameInputManager.Binding.InteractAlternate);
         pauseText.text = gameInputManager.GetBindingText(GameInputManager.Binding.Pause);
     }
 
