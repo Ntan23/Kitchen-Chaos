@@ -1,7 +1,5 @@
 # Kitchen-Chaos
  
-# Kitchen-Chaos
- 
 Kitchen Chaos is a simple cooking game. In this game , I am learning to use SOLID principles to my code and also some code styles and naming rules.
 
 In this game , I use all of my script with Single Responsibility Principle (SRP) except for "Detector.cs" script, I use Interface Segregation Principles (ISP). 
