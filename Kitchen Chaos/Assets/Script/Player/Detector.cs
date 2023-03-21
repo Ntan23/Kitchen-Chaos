@@ -48,11 +48,6 @@ public class Detector : MonoBehaviour
         interactionDetector = new Interaction();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public bool CanMove(Vector3 moveDir)
     {  
