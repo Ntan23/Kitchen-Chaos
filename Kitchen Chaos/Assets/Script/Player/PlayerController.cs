@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
 
     #region OtherVariableS
     GameInputManager gameInputManager;
-    CollisionDetector collisionDetector;
     Detector detector;
     GameManager gm;
     #endregion

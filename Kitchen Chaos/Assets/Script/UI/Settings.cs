@@ -15,7 +15,6 @@ public class Settings : MonoBehaviour
     #endregion
 
     #region OtherVariables
-    //[SerializeField] private AudioSource BGMAudioSource;
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider BGMMixerVolumeSlider;
     [SerializeField] private Slider SFXMixerVolumeSlider;
@@ -111,16 +110,14 @@ public class Settings : MonoBehaviour
 
     public void ChangeBGMVolume(float value)
     {
-        //BGMAudioSource.volume = value;
         audioMixer.SetFloat("BGM_Volume",value);
-        PlayerPrefs.SetFloat("BGM_Volume",value);
+        PlayerPrefs.SetFloat("BGMMixerVolume",value);
     }
 
     public void ChangeSFXVolume(float value)
     {
-        // SFXVolume = value;
         audioMixer.SetFloat("SFX_Volume",value);
-        PlayerPrefs.SetFloat("SFX_Volume",value);
+        PlayerPrefs.SetFloat("SFXMixerVolume",value);
     }
 
     private void UpdateKeyBindingVisual()
